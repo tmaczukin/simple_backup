@@ -1,0 +1,5 @@
+require 'simple_backup/exception/base'
+require 'simple_backup/exception/apps_dir_does_not_exists'
+require 'simple_backup/exception/app_already_defined'
+require 'simple_backup/exception/cant_create_dir'
+require 'simple_backup/exception/type_does_not_exists'
