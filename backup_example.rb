@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby
 
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 require 'simple_backup'
 
 SimpleBackup.run do
-#  log_level           :debug
-  backup_dir          '/backup'
+  log_level  :debug
+  backup_dir '/backup'
+
   high_usage_treshold 0.9
   check_disk_path     '/'
   check_disk_path     '/backup'
@@ -33,7 +37,7 @@ SimpleBackup.run do
 
     from 'backup@localhost'
     to   'root@localhost'
-    cc   'root@localhost'
+    cc   'rb@localhost'
     bcc  'root@localhost'
   end
 end

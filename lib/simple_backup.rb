@@ -19,22 +19,23 @@ module SimpleBackup
   def self.run(&block)
     @@logger.info "Backup #{TIMESTAMP} started"
 
-    dsl = DSL.new
+    engine = Engine::Engine.new
+    dsl = DSL.new(engine)
 
     @@logger.scope_start :info, "Configuration"
     dsl.instance_eval(&block)
-    dsl.prepare
+    engine.prepare
     @@logger.scope_end
 
-    dsl.run
-    dsl.cleanup
+    engine.run
+    engine.cleanup
     @@status = :succeed
 
     @@logger.info "Backup #{TIMESTAMP} finished"
   rescue StandardError => e
     self.handle_exception(e)
   ensure
-    dsl.notify if dsl
+    engine.notify if engine
     @@logger.info "Notifications for backup #{TIMESTAMP} finished"
   end
 

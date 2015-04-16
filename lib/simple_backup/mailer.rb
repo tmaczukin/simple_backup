@@ -5,14 +5,16 @@ module SimpleBackup
   class Mailer
     @@logger = Logger.instance
 
-    def initialize(dsl, storage)
-      @dsl = dsl
+    def initialize(engine, storage)
+      @engine = engine
       @storage = storage
 
       @to = []
       @cc = []
       @bcc = []
       @hostname = Socket.gethostbyname(Socket.gethostname).first
+
+      @engine.mailer = self
     end
 
     def subject_prefix(prefix)
@@ -83,7 +85,7 @@ module SimpleBackup
     private
     def get_body
       sources = ''
-      @dsl.sources.each do |type, srcs|
+      @engine.sources.each do |type, srcs|
         sources += "+ %s:\n" % type.to_s
         srcs.each do |src|
           sources += "  - %s\n" % src
