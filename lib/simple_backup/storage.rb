@@ -52,7 +52,7 @@ module SimpleBackup
     end
 
     def recreate_dir(dir)
-      Dir.mkdir(dir, 0644)
+      Dir.mkdir(dir, 0755)
 
       Logger::warning "Recreated non-existing directory '#{dir}'"
     rescue Errno::EACCES => e

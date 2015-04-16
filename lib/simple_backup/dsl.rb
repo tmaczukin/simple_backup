@@ -80,8 +80,8 @@ module SimpleBackup
 
     def sources
       sources = {}
-      sources[:apps] = @apps.sources
-      sources[:mysql] = @mysql.sources
+      sources[:apps] = @apps.sources if @apps
+      sources[:mysql] = @mysql.sources if @mysql
 
       sources
     end

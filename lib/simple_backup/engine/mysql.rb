@@ -73,7 +73,7 @@ module SimpleBackup
         @dbs = dbs
         @dbs.each do |db, attr|
           tables = []
-          @conn.query("SHOW TABLES FROM #{db}").each do |row|
+          @conn.query("SHOW TABLES FROM `#{db}`").each do |row|
             tables << row["Tables_in_#{db}"]
           end
           tables = tables - attr[:exclude_tables] if attr[:exclude_tables]
