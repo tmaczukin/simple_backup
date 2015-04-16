@@ -7,15 +7,16 @@ module SimpleBackup
     attr_accessor :dir
 
     @@created_files = []
+    @@logger = Logger.instance
 
     def dir=(dir)
       @dir = get_dir(dir)
 
-      Logger::info "Backup dir set to '#{dir}'"
+      @@logger.info "Backup dir set to '#{dir}'"
     end
 
     def space(space)
-      Logger::debug "Setting backup_dir for space '#{space}'"
+      @@logger.debug "Setting backup_dir for space '#{space}'"
       storage = Storage.new
       storage.dir = File.join(@dir.path, format_for_path(space))
       storage
@@ -54,7 +55,7 @@ module SimpleBackup
     def recreate_dir(dir)
       Dir.mkdir(dir, 0755)
 
-      Logger::warning "Recreated non-existing directory '#{dir}'"
+      @@logger.warning "Recreated non-existing directory '#{dir}'"
     rescue Errno::EACCES => e
       raise Exception::CantCreateDir.new(e.message)
     end

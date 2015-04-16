@@ -2,6 +2,8 @@ module SimpleBackup
   module Engine
     module AppStrategy
       class Capistrano < Abstract
+        @@logger = Logger.instance
+
         def backup(name, path, attr)
           shared = get_shared_path(path, attr)
           current = get_current_path(path, attr)
@@ -9,7 +11,7 @@ module SimpleBackup
           paths = [current, shared].compact
 
           if paths.empty?
-            Logger::warning "No capistrano paths for application"
+            @@logger.warning "No capistrano paths for application"
             return false
           end
 
@@ -23,19 +25,19 @@ module SimpleBackup
         private
         def get_current_path(path, attr)
           current = Dir.new(File.join(path, attr[:current] || 'current') + '/')
-          Logger::debug "Capistrano current path: #{current.path}"
+          @@logger.debug "Capistrano current path: #{current.path}"
           current
         rescue Errno::ENOENT
-          Logger::warning "No capistrano current path for application"
+          @@logger.warning "No capistrano current path for application"
           nil
         end
 
         def get_shared_path(path, attr)
           shared = Dir.new(File.join(path, attr[:shared] || 'shared'))
-          Logger::debug "Capistrano shared path: #{shared.path}"
+          @@logger.debug "Capistrano shared path: #{shared.path}"
           shared
         rescue Errno::ENOENT
-          Logger::warning "No capistrano shared path for application"
+          @@logger.warning "No capistrano shared path for application"
           nil
         end
       end

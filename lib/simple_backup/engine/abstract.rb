@@ -1,6 +1,7 @@
 module SimpleBackup
   module Engine
     class Abstract
+      @@logger = Logger.instance
       @keep_last = 5
 
       def storage=(storage)
@@ -24,7 +25,7 @@ module SimpleBackup
         to_remove = backups - to_persist
 
         to_remove.each do |file|
-          Logger::info "Removing old backup #{file}"
+          @@logger.info "Removing old backup #{file}"
           FileUtils.rm(file)
         end
       end

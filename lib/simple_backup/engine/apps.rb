@@ -3,13 +3,15 @@ require 'simple_backup/engine/app_strategy/factory'
 module SimpleBackup
   module Engine
     class Apps < Abstract
+      @@logger = Logger.instance
+
       def initialize
         @apps = {}
         @strategies = {}
       end
 
       def app(path, attr = {})
-        Logger::debug "Adding application #{path} #{attr}"
+        @@logger.debug "Adding application #{path} #{attr}"
         raise Exception::AppAlreadyDefined.new "Application '#{path}' is already defined" if @apps.has_key?(path)
 
         @apps[path] = attr
@@ -34,22 +36,22 @@ module SimpleBackup
       private
       def backup_app(path, attr)
         name = path.split('/').last
-        Logger::scope_start :info, "Backup of application #{name} started"
-        Logger::debug "name: #{name}, attr: #{attr}"
+        @@logger.scope_start :info, "Backup of application #{name} started"
+        @@logger.debug "name: #{name}, attr: #{attr}"
 
         strategy = get_strategy(attr[:type])
         strategy.storage = @storage.space(name)
         is_backuped = strategy.backup(name, path, attr)
 
-        Logger::scope_end :info, "Backup of application #{name} finished" if is_backuped
-        Logger::scope_end :info, "Backup of application #{name} skipped" unless is_backuped
+        @@logger.scope_end :info, "Backup of application #{name} finished" if is_backuped
+        @@logger.scope_end :info, "Backup of application #{name} skipped" unless is_backuped
       end
 
       def app_exists(path)
         Dir.new(path)
         true
       rescue Errno::ENOENT
-        Logger::warning "App path '#{path}' does not exists"
+        @@logger.warning "App path '#{path}' does not exists"
         false
       end
 

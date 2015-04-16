@@ -3,6 +3,8 @@ require 'mysql2'
 module SimpleBackup
   module Engine
     class MySQL < Abstract
+      @@logger = Logger.instance
+
       def initialize
         @host = 'localhost'
         @port = 3306
@@ -28,7 +30,7 @@ module SimpleBackup
       end
 
       def db(name, attr = {})
-        Logger::debug "Adding database #{name} #{attr}"
+        @@logger.debug "Adding database #{name} #{attr}"
         raise Exception::AppAlreadyDefined.new "Database '#{name}' is already defined" if @dbs.has_key?(name)
 
         @dbs[name] = attr
@@ -86,18 +88,18 @@ module SimpleBackup
         if @existing_dbs.include?(db)
           return true
         end
-        Logger::warning "Database '#{db}' does not exists"
+        @@logger.warning "Database '#{db}' does not exists"
       end
 
       def dump_db(dir, db, attr)
-        Logger::scope_start :info, "Backup of mysql database #{db} started"
+        @@logger.scope_start :info, "Backup of mysql database #{db} started"
 
         file = File.join(dir, db) + '.sql'
         cmd = "mysqldump --flush-logs --flush-privileges --order-by-primary --complete-insert -C -h #{@host} -u #{@user} -p#{@pass} #{db} #{attr[:tables].join(' ')} > #{file}"
-        Logger::debug "Running command: #{cmd}"
+        @@logger.debug "Running command: #{cmd}"
         `#{cmd}`
 
-        Logger::scope_end :info, "Backup of mysql database #{db} finished"
+        @@logger.scope_end :info, "Backup of mysql database #{db} finished"
       end
     end
   end

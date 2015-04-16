@@ -3,6 +3,8 @@ require 'socket'
 
 module SimpleBackup
   class Mailer
+    @@logger = Logger.instance
+
     def initialize(dsl, storage)
       @dsl = dsl
       @storage = storage
@@ -34,29 +36,29 @@ module SimpleBackup
     end
 
     def send
-      Logger::scope_start :info, "Sending e-mail notification"
+      @@logger.scope_start :info, "Sending e-mail notification"
 
-      Logger::info "Setting sender to: #{@from}"
+      @@logger.info "Setting sender to: #{@from}"
       from = @from
-      Logger::scope_start :info, "Adding recipients:"
+      @@logger.scope_start :info, "Adding recipients:"
       to = @to
       to.each do |mail|
-        Logger::info "to: #{mail}"
+        @@logger.info "to: #{mail}"
       end
       cc = @cc
       cc.each do |mail|
-        Logger::info "cc: #{mail}"
+        @@logger.info "cc: #{mail}"
       end
       bcc = @bcc
       bcc.each do |mail|
-        Logger::info "bcc: #{mail}"
+        @@logger.info "bcc: #{mail}"
       end
-      Logger::scope_end
+      @@logger.scope_end
 
       @subject_prefix += '[FAILED]' if SimpleBackup.status == :failed
 
       subject = "%s Backup %s for %s" % [@subject_prefix, TIMESTAMP, @hostname]
-      Logger::debug "Subject: #{subject}"
+      @@logger.debug "Subject: #{subject}"
 
       body = get_body
 
@@ -70,12 +72,12 @@ module SimpleBackup
       end
 
       mail.delivery_method :sendmail
-      Logger::debug "Setting delivery method to sendmail"
+      @@logger.debug "Setting delivery method to sendmail"
 
       mail.deliver
-      Logger::info "Notification sent"
+      @@logger.info "Notification sent"
 
-      Logger::scope_end
+      @@logger.scope_end
     end
 
     private
@@ -106,7 +108,7 @@ Disk usage after backup:
 #{disk_usage}
 Backup log:
 ------------
-#{Logger::buffer.join("\n")}
+#{@@logger.buffer.join("\n")}
 ------------
 
 Have a nice day,

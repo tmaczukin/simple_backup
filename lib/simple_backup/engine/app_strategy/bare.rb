@@ -2,6 +2,8 @@ module SimpleBackup
   module Engine
     module AppStrategy
       class Bare < Abstract
+        @@logger = Logger.instance
+
         def backup(name, path, attr)
           app_elements = get_path_entries(path).map do |p|
             if p.match(/^\.\.?$/)
@@ -20,7 +22,7 @@ module SimpleBackup
         def get_path_entries(path)
           Dir.entries(path)
         rescue Errno::ENOENT
-          Logger::warning "App path does not exists"
+          @@logger.warning "App path does not exists"
           nil
         end
       end
