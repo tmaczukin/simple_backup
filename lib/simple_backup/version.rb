@@ -1,9 +1,9 @@
 module SimpleBackup
   class Version
     MAJOR = 0
-    MINOR = 2
-    PATCH = 1
-    PRE_RELEASE = nil
+    MINOR = 3
+    PATCH = 0
+    PRE_RELEASE = 'dev'
 
     def self.get
       version = "#{MAJOR}.#{MINOR}.#{PATCH}"
