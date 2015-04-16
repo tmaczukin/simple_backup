@@ -10,7 +10,7 @@ module SimpleBackup
       @to = []
       @cc = []
       @bcc = []
-      @hostname = Socket.gethostname
+      @hostname = Socket.gethostbyname(Socket.gethostname).first
     end
 
     def subject_prefix(prefix)
@@ -55,7 +55,7 @@ module SimpleBackup
 
       @subject_prefix += '[FAILED]' if SimpleBackup.status == :failed
 
-      subject = "%s Backup %s for hostname %s" % [@subject_prefix, TIMESTAMP, @hostname]
+      subject = "%s Backup %s for %s" % [@subject_prefix, TIMESTAMP, @hostname]
       Logger::debug "Subject: #{subject}"
 
       body = get_body
