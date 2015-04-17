@@ -10,14 +10,29 @@ module SimpleBackup
       @default_keep_last = 5
     end
 
+    def default_keep_last=(value)
+      @default_keep_last = value
+    end
+
     def each(&block)
       @sources.each do |type, sources|
         sources.each(&block)
       end
     end
 
-    def default_keep_last=(value)
-      @default_keep_last = value
+    def backup_files
+      backup_files = []
+      @sources.each do |type, sources|
+        sources.each do |source|
+          backup_files << {
+            type: source.type,
+            name: source.name,
+            file: source.get
+          }
+        end
+      end
+
+      backup_files
     end
 
     def method_missing(method, *args)

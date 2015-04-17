@@ -22,9 +22,8 @@ module SimpleBackup
         @@logger.error "Disk high usage treshold exceeded #{usage[:high_usage]}" if usage[:high_usage_exceeded]
         @@logger.scope_start :info, "Backup job"
 
-        @@sources.each do |source|
-          source.get
-        end
+        backup_files = @@sources.backup_files
+        puts backup_files
 
         @@logger.scope_end
       end
