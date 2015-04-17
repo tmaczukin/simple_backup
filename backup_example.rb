@@ -14,23 +14,35 @@ SimpleBackup.run do
   check_disk_path     '/backup'
   check_disk_path     '/home/app'
 
-  apps do
-    keep_last 9
+  default_keep_last 9
 
-    app '/home/app/app-1', type: :capistrano
-    app '/home/app/app-2', type: :bare
+  sources do
+    dir '/home/app/app-1', type: :capistrano
+    dir '/home/app/app-2'
+
+    file '/etc/hosts'
+
+    mysql 'test-1'
+    mysql 'test-2', exclude_tables: ['t_test1', 't_test2']
   end
 
-  mysql do
-    keep_last 9
+#  apps do
+#    keep_last 9
+#
+#    app '/home/app/app-1', type: :capistrano
+#    app '/home/app/app-2', type: :bare
+#  end
 
-    host 'localhost'
-    port 3306
-    user 'backup'
-    pass 'backup'
-    db   'test1'
-    db   'test2', exclude_tables: ['t_test1']
-  end
+#  mysql do
+#    keep_last 9
+#
+#    host 'localhost'
+#    port 3306
+#    user 'backup'
+#    pass 'backup'
+#    db   'test1'
+#    db   'test2', exclude_tables: ['t_test1']
+#  end
 
   mailer do
     subject_prefix '[BACKUP]'

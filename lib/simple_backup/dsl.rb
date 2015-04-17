@@ -1,3 +1,5 @@
+require 'simple_backup/sources'
+
 module SimpleBackup
   class DSL
     @@logger = Logger.instance
@@ -28,17 +30,19 @@ module SimpleBackup
       Utils::Disk.add_path(path)
     end
 
-    def apps(&block)
-      @engine.apps_block = block
+    def default_keep_last(value)
+      Sources.instance.default_keep_last = value
     end
 
-    def mysql(&block)
-      @engine.mysql_block = block
+    def sources(&block)
+      @sources = Sources.instance
+      @sources.instance_eval(&block)
     end
 
     def mailer(&block)
-      @mailer = Mailer.new(@engine, @storage)
+      @mailer = Mailer.new(@storage)
       @mailer.instance_eval(&block)
+      @engine.mailer = @mailer
     end
   end
 end

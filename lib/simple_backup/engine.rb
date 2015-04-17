@@ -8,19 +8,11 @@ module SimpleBackup
       @@logger = Logger.instance
 
       def storage=(storage)
-        @storage=storage
+        @storage = storage
       end
 
       def mailer=(mailer)
-        @mailer=mailer
-      end
-
-      def apps_block=(block)
-        @apps_block = block
-      end
-
-      def mysql_block=(block)
-        @mysql_block=block
+        @mailer = mailer
       end
 
       def prepare
@@ -62,13 +54,6 @@ module SimpleBackup
         @mailer.send if @mailer
       rescue StandardError => e
         SimpleBackup.handle_exception(e)
-      end
-
-      def sources
-        sources = {}
-        sources[:apps] = @apps.sources if @apps
-        sources[:mysql] = @mysql.sources if @mysql
-        sources
       end
     end
   end
