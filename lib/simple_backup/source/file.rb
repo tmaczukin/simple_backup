@@ -6,10 +6,6 @@ module SimpleBackup
 
         @keep_last = options[:keep_last] if options[:keep_last]
       end
-
-      def desc
-        @path
-      end
     end
   end
 end

@@ -1,34 +1,31 @@
 module SimpleBackup
   module Source
     class Dir < Abstract
-      @type = :bare
+      def initialize
+        @strategy = :bare
+      end
 
       def configure(path, options = {})
         @path = path
 
-        @type = options[:type] if options[:type]
+        @type = options[:strategy] if options[:strategy]
         @keep_last = options[:keep_last] if options[:keep_last]
-      end
-
-      def desc
-        "#{@path}, type: #{@type}"
       end
 
       private
       def prepare_data
-        path_entries = get_path_entries(@path).map do |p|
-          if p.match(/^\.\.?$/)
-            nil
-          else
-            ::File.join(@path, p)
-          end
-        end.compact
-
-        FileUtils.cp_r path_entries, @tmp_dir
+        path_entries = get_path_entries
+        FileUtils.cp_r path_entries, @tmp_dir if path_entries
       end
 
-      def get_path_entries(path)
-        ::Dir.entries(path)
+      def get_path_entries
+        file = "simple_backup/source/dir_strategy/#{@strategy.to_s}"
+
+        require file
+        strategy_name = Object.const_get("SimpleBackup::Source::DirStrategy::#{@strategy.to_s.capitalize}")
+        strategy = strategy_name.new
+
+        strategy.get_entries(@path)
       rescue Errno::ENOENT
         @@logger.warning "App path does not exists"
         nil

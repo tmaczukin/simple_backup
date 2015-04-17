@@ -26,6 +26,7 @@ module SimpleBackup
       return nil if source.nil?
 
       source.keep_last = @default_keep_last
+      source.name = args.shift
       source.configure(*args)
 
       type = source.type.to_sym

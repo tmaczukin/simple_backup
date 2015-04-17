@@ -15,27 +15,35 @@ module SimpleBackup
         @keep_last = value
       end
 
+      def name=(value)
+        @name = value
+      end
+
+      def name
+        @name
+      end
+
       def type
         self.class.name.split('::').last
       end
 
       def desc
-        raise NotImplementedError
+        '%5s :: %s' % [type, @name]
       end
 
       def get
-        @@logger.scope_start :info, "Getting archive for: #{type} :: #{desc}"
+        @@logger.scope_start :info, "Getting archive for: #{desc}"
 
         @tmp_dir = ::Dir.mktmpdir('simple_backup-')
         @@logger.debug "Created tmp directory #{@tmp_dir}"
 
         prepare_data
-        archived_data = archive_data
+        backup_file = archive_data
 
         FileUtils.rm_rf(@tmp_dir)
         @@logger.debug "Removed tmp directory #{@tmp_dir}"
 
-        archived_data
+        backup_file
       ensure
         @@logger.scope_end
       end
@@ -46,6 +54,19 @@ module SimpleBackup
       end
 
       def archive_data
+        filename = "#{type}-#{name}".gsub(/[^a-zA-Z0-9\-\_\. ]*/, '').gsub(/\s+/, '_').downcase + ".#{SimpleBackup::TIMESTAMP}.tar.gz"
+        backup_file = ::File.join(::Dir.tmpdir, filename)
+
+        File.open(backup_file, 'w') do |f|
+          f.write targz.string
+        end
+
+        @@logger.info "Backup saved to temporary file #{backup_file}"
+
+        backup_file
+      end
+
+      def targz
         path = @tmp_dir
 
         content = StringIO.new('');

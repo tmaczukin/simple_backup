@@ -84,7 +84,7 @@ module SimpleBackup
       sources = ''
 
       Sources.instance.each do |source|
-        sources += " %5s :: %s\n" % [source.type, source.desc]
+        sources += "- %s\n" % source.desc
       end
 
       backup_files = ''
