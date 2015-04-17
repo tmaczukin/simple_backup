@@ -20,10 +20,10 @@ SimpleBackup.run do
     dir '/home/app/app-1', type: :capistrano
     dir '/home/app/app-2'
 
-    file '/etc/hosts'
-
-    mysql 'test-1'
-    mysql 'test-2', exclude_tables: ['t_test1', 't_test2']
+#    file '/etc/hosts'
+#
+#    mysql 'test-1'
+#    mysql 'test-2', exclude_tables: ['t_test1', 't_test2']
   end
 
 #  apps do

@@ -24,7 +24,6 @@ module SimpleBackup
 
     @@logger.scope_start :info, "Configuration"
     dsl.instance_eval(&block)
-    engine.prepare
     @@logger.scope_end
 
     engine.run
