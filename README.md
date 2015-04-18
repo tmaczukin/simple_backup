@@ -9,7 +9,8 @@ development and its API should be treat as unstable.
 ## TODO
 
 - [ ] Refactorization
-- [ ] Few backend for backup store (file, s3, ftp)
+- [ ] Few backends for backup store (file, s3, ftp)
+- [ ] Filters mechanism (e.g. PGP encryption)
 - [ ] Tests
 - [ ] Docummentation and examples
 
