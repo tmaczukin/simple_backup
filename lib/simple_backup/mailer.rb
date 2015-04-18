@@ -83,7 +83,7 @@ module SimpleBackup
     def get_body
       sources = ''
 
-      Sources.instance.each do |source|
+      Sources.instance.each do |name, source|
         sources += "- %s\n" % source.desc
       end
 

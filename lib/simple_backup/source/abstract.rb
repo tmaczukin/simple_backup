@@ -57,7 +57,7 @@ module SimpleBackup
         filename = "#{type}-#{name}".gsub(/[^a-zA-Z0-9\-\_\. ]*/, '').gsub(/\s+/, '_').downcase + ".#{SimpleBackup::TIMESTAMP}.tar.gz"
         backup_file = ::File.join(::Dir.tmpdir, filename)
 
-        File.open(backup_file, 'w') do |f|
+        ::File.open(backup_file, 'w') do |f|
           f.write targz.string
         end
 
