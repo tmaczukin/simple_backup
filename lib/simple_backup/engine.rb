@@ -34,7 +34,10 @@ module SimpleBackup
       end
 
       def notify
-        @mailer.send if @mailer
+        return unless @mailer
+        @mailer.send
+
+        @@logger.info "Notifications for backup #{TIMESTAMP} finished"
       rescue StandardError => e
         SimpleBackup.handle_exception(e)
       end

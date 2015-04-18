@@ -34,7 +34,6 @@ module SimpleBackup
     self.handle_exception(e)
   ensure
     engine.notify if engine
-    @@logger.info "Notifications for backup #{TIMESTAMP} finished"
   end
 
   def self.handle_exception(e)
