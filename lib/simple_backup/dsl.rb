@@ -5,17 +5,11 @@ module SimpleBackup
     @@logger = Logger.instance
 
     def initialize(engine)
-      @storage = Storage.new
       @engine = engine
-      @engine.storage = @storage
     end
 
     def log_level(level)
       @@logger.level = level
-    end
-
-    def backup_dir(dir)
-      @storage.dir = dir
     end
 
     def high_usage_treshold(value)
@@ -40,7 +34,7 @@ module SimpleBackup
     end
 
     def mailer(&block)
-      @mailer = Mailer.new(@storage)
+      @mailer = Mailer.new
       @mailer.instance_eval(&block)
       @engine.mailer = @mailer
     end

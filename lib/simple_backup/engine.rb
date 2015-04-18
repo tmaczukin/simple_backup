@@ -8,10 +8,6 @@ module SimpleBackup
       @@logger = Logger.instance
       @@sources = Sources.instance
 
-      def storage=(storage)
-        @storage = storage
-      end
-
       def mailer=(mailer)
         @mailer = mailer
       end
@@ -23,7 +19,6 @@ module SimpleBackup
         @@logger.scope_start :info, "Backup job"
 
         backup_files = @@sources.backup_files
-        puts backup_files
 
         @@logger.scope_end
       end

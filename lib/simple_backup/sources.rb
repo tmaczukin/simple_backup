@@ -23,7 +23,9 @@ module SimpleBackup
     end
 
     def backup_files
-      backup_files = []
+      return @backup_files if @backup_files
+
+      @backup_files = []
       @sources.each do |type, sources|
         sources.each do |name, source|
           backup_files << {
@@ -34,7 +36,7 @@ module SimpleBackup
         end
       end
 
-      backup_files
+      @backup_files
     end
 
     def method_missing(method, *args)

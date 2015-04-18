@@ -4,10 +4,9 @@ require 'socket'
 module SimpleBackup
   class Mailer
     @@logger = Logger.instance
+    @@sources = Sources.instance
 
-    def initialize(storage)
-      @storage = storage
-
+    def initialize()
       @to = []
       @cc = []
       @bcc = []
@@ -83,13 +82,13 @@ module SimpleBackup
     def get_body
       sources = ''
 
-      Sources.instance.each do |name, source|
-        sources += "- %s\n" % source.desc
+      @@sources.each do |name, source|
+        sources += " - %s\n" % source.desc
       end
 
       backup_files = ''
-      @storage.created_files.each do |file|
-        backup_files += "- %s\n" % file
+      @@sources.backup_files.each do |f|
+        backup_files += " - %s\n" % f[:file]
       end
 
       body = <<MAIL

@@ -7,7 +7,6 @@ require 'simple_backup'
 
 SimpleBackup.run do
   log_level  :debug
-  backup_dir '/backup'
 
   high_usage_treshold 0.9
   check_disk_path     '/'
