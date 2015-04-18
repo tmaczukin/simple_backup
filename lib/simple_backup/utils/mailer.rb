@@ -82,11 +82,6 @@ module SimpleBackup
           sources += " - %s\n" % source.desc
         end
 
-        backup_files = ''
-#        SimpleBackup::Sources.instance.backup_files.each do |f|
-#          backup_files += " - %s\n" % f[:file]
-#        end
-
         body = <<MAIL
 Hi,
 
@@ -94,8 +89,6 @@ Backup #{TIMESTAMP} was created!
 
 Backup contains:
 #{sources}
-Created backup files:
-#{backup_files}
 Disk usage after backup:
 #{disk_usage}
 Backup log:
@@ -104,7 +97,7 @@ Backup log:
 ------------
 
 Have a nice day,
-  Backuper
+  SimpleBackup
 
 -- 
 Mail was send automatically
