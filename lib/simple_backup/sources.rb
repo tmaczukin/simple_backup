@@ -28,11 +28,13 @@ module SimpleBackup
       @backup_files = []
       @sources.each do |type, sources|
         sources.each do |name, source|
+          file = source.get
+
           backup_files << {
             type: source.type,
             name: source.name,
             file: source.get
-          }
+          } if file
         end
       end
 

@@ -1,6 +1,8 @@
 module SimpleBackup
   module Engine
     class Engine
+
+      @@backends = Backends.instance
       @@sources = Sources.instance
       @@logger = Utils::Logger.instance
       @@mysql = Utils::MySQL.instance
@@ -16,6 +18,7 @@ module SimpleBackup
         @@logger.scope_start :info, "Backup job"
 
         backup_files = @@sources.backup_files
+        @@backends.save(backup_files)
 
         @@logger.scope_end
       ensure

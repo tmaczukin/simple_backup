@@ -1,5 +1,3 @@
-require 'simple_backup/sources'
-
 module SimpleBackup
   class DSL
     @@logger = Utils::Logger.instance
@@ -29,8 +27,13 @@ module SimpleBackup
     end
 
     def sources(&block)
-      @sources = Sources.instance
-      @sources.instance_eval(&block)
+      sources = Sources.instance
+      sources.instance_eval(&block)
+    end
+
+    def backends(&block)
+      backends = Backends.instance
+      backends.instance_eval(&block)
     end
 
     def mysql(&block)

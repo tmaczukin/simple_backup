@@ -1,8 +1,9 @@
 require 'simple_backup/version'
 require 'simple_backup/utils'
 require 'simple_backup/dsl'
-require 'simple_backup/engine'
+require 'simple_backup/backends'
 require 'simple_backup/sources'
+require 'simple_backup/engine'
 
 module SimpleBackup
   TIMESTAMP = Time.new.strftime('%Y%m%d%H%M%S')
