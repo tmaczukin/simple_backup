@@ -8,11 +8,13 @@ development and its API should be treat as unstable.
 
 ## TODO
 
-- [ ] Refactorization
-- [ ] Few backends for backup store (file, s3, ftp)
-- [ ] Filters mechanism (e.g. PGP encryption)
-- [ ] Tests
-- [ ] Docummentation and examples
+- [x] Change architecture and refactorize
+- [x] Add sources mechanism
+- [x] Add backends mechanism (with 'local' backend implementation)
+- [ ] Add more backends (e.g. s3, ftp)
+- [ ] Add filters mechanism (e.g. PGP encryption)
+- [ ] Add tests
+- [ ] Add docummentation and examples
 
 ## License
 
