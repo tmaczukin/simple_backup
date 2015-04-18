@@ -1,8 +1,8 @@
 module SimpleBackup
   module Engine
     class Engine
-      @@logger = Logger.instance
       @@sources = Sources.instance
+      @@logger = Utils::Logger.instance
       @@mysql = Utils::MySQL.instance
 
       def mailer=(mailer)

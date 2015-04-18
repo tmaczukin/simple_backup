@@ -5,7 +5,7 @@ module SimpleBackup
   class Sources
     include Singleton
 
-    @@logger = Logger.instance
+    @@logger = Utils::Logger.instance
 
     def initialize
       @sources = {}

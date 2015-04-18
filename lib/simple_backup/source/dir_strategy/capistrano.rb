@@ -2,7 +2,7 @@ module SimpleBackup
   module Source
     module DirStrategy
       class Capistrano
-        @@logger = Logger.instance
+        @@logger = Utils::Logger.instance
 
         def get_entries(path)
           shared = shared_path(path)

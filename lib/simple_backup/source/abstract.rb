@@ -5,7 +5,7 @@ require 'zlib'
 module SimpleBackup
   module Source
     class Abstract
-      @@logger = Logger.instance
+      @@logger = Utils::Logger.instance
 
       def configure(*args)
         raise NotImplementedError

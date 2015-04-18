@@ -1,15 +1,14 @@
 require 'simple_backup/version'
-require 'simple_backup/logger'
 require 'simple_backup/utils'
 require 'simple_backup/dsl'
 require 'simple_backup/engine'
-require 'simple_backup/mailer'
+require 'simple_backup/sources'
 
 module SimpleBackup
   TIMESTAMP = Time.new.strftime('%Y%m%d%H%M%S')
 
   @@status = :failed
-  @@logger = Logger.instance
+  @@logger = Utils::Logger.instance
 
   def self.status
     @@status

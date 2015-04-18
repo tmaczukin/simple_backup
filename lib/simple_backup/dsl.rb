@@ -2,7 +2,7 @@ require 'simple_backup/sources'
 
 module SimpleBackup
   class DSL
-    @@logger = Logger.instance
+    @@logger = Utils::Logger.instance
 
     def initialize(engine)
       @engine = engine
@@ -42,7 +42,7 @@ module SimpleBackup
     def mailer(&block)
       @@logger.info "Configuring Mailer Util"
 
-      @mailer = Mailer.new
+      @mailer = Utils::Mailer.new
       @mailer.instance_eval(&block)
       @engine.mailer = @mailer
     end
