@@ -51,7 +51,7 @@ module SimpleBackup
 
       source.keep_last = @default_keep_last
       source.name = name
-      source.configure(*args)
+      configured = source.configure(*args)
 
       @@logger.info "Created source for: #{source.desc}"
 

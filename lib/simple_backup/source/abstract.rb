@@ -37,8 +37,10 @@ module SimpleBackup
         @tmp_dir = ::Dir.mktmpdir('simple_backup-')
         @@logger.debug "Created tmp directory #{@tmp_dir}"
 
-        prepare_data
-        backup_file = archive_data
+        data_exists = prepare_data
+
+        @@logger.warning "No data for: #{desc}" unless data_exists
+        backup_file = archive_data if data_exists
 
         FileUtils.rm_rf(@tmp_dir)
         @@logger.debug "Removed tmp directory #{@tmp_dir}"

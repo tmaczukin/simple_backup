@@ -33,7 +33,15 @@ module SimpleBackup
       @sources.instance_eval(&block)
     end
 
+    def mysql(&block)
+      @@logger.info "Configuring MySQL Util"
+
+      Utils::MySQL.instance.instance_eval(&block)
+    end
+
     def mailer(&block)
+      @@logger.info "Configuring Mailer Util"
+
       @mailer = Mailer.new
       @mailer.instance_eval(&block)
       @engine.mailer = @mailer

@@ -18,30 +18,21 @@ SimpleBackup.run do
   sources do
     dir 'app-1', '/home/app/app-1', type: :capistrano
     dir 'app-2', '/home/app/app-2'
+    dir 'none',  '/none'
 
     file 'hosts', '/etc/hosts'
 
-#    mysql 'test-1', 'test-1'
-#    mysql 'test-2', 'test-2', exclude_tables: ['t_test1', 't_test2']
+    mysql 'test1', 'test1'
+    mysql 'test2', 'test2'
+    mysql 'test3', 'test3', exclude_tables: ['t_test1']
   end
 
-#  apps do
-#    keep_last 9
-#
-#    app '/home/app/app-1', type: :capistrano
-#    app '/home/app/app-2', type: :bare
-#  end
-
-#  mysql do
-#    keep_last 9
-#
-#    host 'localhost'
-#    port 3306
-#    user 'backup'
-#    pass 'backup'
-#    db   'test1'
-#    db   'test2', exclude_tables: ['t_test1']
-#  end
+  mysql do
+    host 'localhost'
+    port 3306
+    user 'root'
+    pass 'root'
+  end
 
   mailer do
     subject_prefix '[BACKUP]'

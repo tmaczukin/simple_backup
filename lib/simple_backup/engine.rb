@@ -7,6 +7,7 @@ module SimpleBackup
     class Engine
       @@logger = Logger.instance
       @@sources = Sources.instance
+      @@mysql = Utils::MySQL.instance
 
       def mailer=(mailer)
         @mailer = mailer
@@ -21,6 +22,8 @@ module SimpleBackup
         backup_files = @@sources.backup_files
 
         @@logger.scope_end
+      ensure
+        @@mysql.close
       end
 
       def cleanup

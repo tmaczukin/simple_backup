@@ -8,7 +8,7 @@ module SimpleBackup
       def configure(path, options = {})
         @path = path
 
-        raise "#{path} is a file - use File source instead of Dir" unless ::File.directory?(path)
+        raise "#{path} is a file - use File source instead of Dir" unless !::File.exist?(path) or ::File.directory?(path)
 
         @type = options[:strategy] if options[:strategy]
         @keep_last = options[:keep_last] if options[:keep_last]
@@ -16,8 +16,12 @@ module SimpleBackup
 
       private
       def prepare_data
+        return false unless ::File.exist?(@path)
+
         path_entries = get_path_entries
         FileUtils.cp_r path_entries, @tmp_dir if path_entries
+
+        true
       end
 
       def get_path_entries
@@ -29,7 +33,7 @@ module SimpleBackup
 
         strategy.get_entries(@path)
       rescue Errno::ENOENT
-        @@logger.warning "App path does not exists"
+        @@logger.warning "Path '#{@path}' does not exists"
         nil
       end
     end
