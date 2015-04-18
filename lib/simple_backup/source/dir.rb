@@ -9,9 +9,7 @@ module SimpleBackup
         @path = path
 
         raise "#{path} is a file - use File source instead of Dir" unless !::File.exist?(path) or ::File.directory?(path)
-
-        @type = options[:strategy] if options[:strategy]
-        @keep_last = options[:keep_last] if options[:keep_last]
+        @strategy = options[:strategy] if options[:strategy]
       end
 
       private

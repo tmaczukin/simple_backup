@@ -22,23 +22,18 @@ module SimpleBackup
       end
     end
 
-    def backup_files
-      return @backup_files if @backup_files
-
-      @backup_files = []
+    def backup
       @sources.each do |type, sources|
         sources.each do |name, source|
-          file = source.get
-
-          backup_files << {
-            type: source.type,
-            name: source.name,
-            file: source.get
-          } if file
+          source.get
         end
       end
+    end
 
-      @backup_files
+    def cleanup
+      each do |name, source|
+        source.cleanup
+      end
     end
 
     def method_missing(method, *args)
@@ -47,15 +42,22 @@ module SimpleBackup
       return nil if source.nil?
 
       name = args.shift
+      identifier = args.shift
+      options = args.shift
+      options ||= {}
+
       type = source.type.to_sym
       @sources[type] = {} if @sources[type].nil?
-      raise "Name '#{name}' for type #{type} already used" if @sources[type].has_key?(name.to_sym)
+      raise "Name '#{name}' for source #{type} already used" if @sources[type].has_key?(name.to_sym)
 
       source.keep_last = @default_keep_last
+      source.keep_last = options[:keep_last] if options[:keep_last]
+      source.backends = options[:backends] if options[:backends]
       source.name = name
-      configured = source.configure(*args)
 
-      @@logger.info "Created source for: #{source.desc}"
+      source.configure(identifier, options)
+
+      @@logger.info "Created source for: #{source.desc.strip}"
 
       @sources[type][name.to_sym] = source
     end

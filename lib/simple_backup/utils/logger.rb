@@ -48,7 +48,7 @@ module SimpleBackup
 
       def scope_end(level = nil, message = nil)
         log level, message unless level.nil? and message.nil?
-        @scope -= 1
+        @scope -= 1 unless @scope == 0
       end
 
       def debug(message)

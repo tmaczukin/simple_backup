@@ -1,8 +1,8 @@
 require 'simple_backup/version'
 require 'simple_backup/utils'
 require 'simple_backup/dsl'
-require 'simple_backup/backends'
 require 'simple_backup/sources'
+require 'simple_backup/backends'
 require 'simple_backup/engine'
 
 module SimpleBackup
@@ -16,7 +16,7 @@ module SimpleBackup
   end
 
   def self.run(&block)
-    @@logger.info "Backup #{TIMESTAMP} started"
+    @@logger.scope_start :info, "Backup #{TIMESTAMP} started"
 
     engine = Engine::Engine.new
     dsl = DSL.new(engine)
@@ -26,10 +26,9 @@ module SimpleBackup
     @@logger.scope_end
 
     engine.run
-    engine.cleanup
     @@status = :succeed
 
-    @@logger.info "Backup #{TIMESTAMP} finished"
+    @@logger.scope_end :info, "Backup #{TIMESTAMP} finished"
   rescue StandardError => e
     self.handle_exception(e)
   ensure

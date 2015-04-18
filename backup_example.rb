@@ -16,8 +16,8 @@ SimpleBackup.run do
   default_keep_last 9
 
   sources do
-    dir 'app-1', '/home/app/app-1', type: :capistrano
-    dir 'app-2', '/home/app/app-2'
+    dir 'app-1', '/home/app/app-1', type: :capistrano, backends: 'backup'
+    dir 'app-2', '/home/app/app-2', backends: :none
     dir 'none',  '/none'
 
     file 'hosts', '/etc/hosts'
@@ -25,6 +25,10 @@ SimpleBackup.run do
     mysql 'test1', 'test1'
     mysql 'test2', 'test2'
     mysql 'test3', 'test3', exclude_tables: ['t_test1']
+  end
+
+  backends do
+    local 'backup', path: '/srv/backup'
   end
 
   mysql do

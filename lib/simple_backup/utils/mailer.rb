@@ -34,8 +34,6 @@ module SimpleBackup
       end
 
       def send
-        @@logger.scope_start :info, "Sending e-mail notification"
-
         @@logger.info "Setting sender to: #{@from}"
         from = @from
         @@logger.scope_start :info, "Adding recipients:"
@@ -74,8 +72,6 @@ module SimpleBackup
 
         mail.deliver
         @@logger.info "Notification sent"
-
-        @@logger.scope_end
       end
 
       private
@@ -87,9 +83,9 @@ module SimpleBackup
         end
 
         backup_files = ''
-        SimpleBackup::Sources.instance.backup_files.each do |f|
-          backup_files += " - %s\n" % f[:file]
-        end
+#        SimpleBackup::Sources.instance.backup_files.each do |f|
+#          backup_files += " - %s\n" % f[:file]
+#        end
 
         body = <<MAIL
 Hi,

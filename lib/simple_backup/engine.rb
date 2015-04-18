@@ -15,29 +15,24 @@ module SimpleBackup
         usage = Utils::Disk::usage
 
         @@logger.error "Disk high usage treshold exceeded #{usage[:high_usage]}" if usage[:high_usage_exceeded]
-        @@logger.scope_start :info, "Backup job"
+        @@logger.scope_start :info, "Backup"
 
-        backup_files = @@sources.backup_files
-        @@backends.save(backup_files)
+        @@sources.backup
+        @@backends.save_and_cleanup
+        @@sources.cleanup
 
         @@logger.scope_end
       ensure
         @@mysql.close
       end
 
-      def cleanup
-        @@logger.scope_start :info, "Cleanup job"
-
-        # cleanup
-
-        @@logger.scope_end
-      end
-
       def notify
         return unless @mailer
+        @@logger.scope_start :info, "Sending e-mail notification"
+
         @mailer.send
 
-        @@logger.info "Notifications for backup #{TIMESTAMP} finished"
+        @@logger.scope_end :info, "Notifications for backup #{TIMESTAMP} finished"
       rescue StandardError => e
         SimpleBackup.handle_exception(e)
       end

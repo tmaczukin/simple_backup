@@ -15,8 +15,12 @@ module SimpleBackup
         @keep_last = value
       end
 
+      def keep_last
+        @keep_last
+      end
+
       def name=(value)
-        @name = value
+        @name = value.gsub(/[^a-zA-Z0-9\-\_\. ]*/, '').gsub(/\s+/, '_').downcase
       end
 
       def name
@@ -24,7 +28,7 @@ module SimpleBackup
       end
 
       def type
-        self.class.name.split('::').last
+        self.class.name.split('::').last.gsub(/[^a-zA-Z0-9\-\_\. ]*/, '').gsub(/\s+/, '_').downcase
       end
 
       def desc
@@ -32,6 +36,8 @@ module SimpleBackup
       end
 
       def get
+        return @backup_file if @backup_file
+
         @@logger.scope_start :info, "Getting archive for: #{desc}"
 
         @tmp_dir = ::Dir.mktmpdir('simple_backup-')
@@ -40,14 +46,38 @@ module SimpleBackup
         data_exists = prepare_data
 
         @@logger.warning "No data for: #{desc}" unless data_exists
-        backup_file = archive_data if data_exists
+        archive_data if data_exists
 
         FileUtils.rm_rf(@tmp_dir)
         @@logger.debug "Removed tmp directory #{@tmp_dir}"
 
-        backup_file
+        @backup_file
       ensure
         @@logger.scope_end
+      end
+
+      def cleanup
+        return nil unless @backup_file
+
+        FileUtils.rm (@backup_file)
+        @@logger.debug "Temporary backup file #{@backup_file} was removed"
+      end
+
+      def backup_file
+        @backup_file
+      end
+
+      def backends=(value)
+        @backends = []
+        @backends = @backends + value if value.kind_of?(Array)
+        @backends << value unless value.kind_of?(Array)
+      end
+
+      def supports(backend)
+        return TRUE unless @backends
+        return FALSE unless @backends.include?(backend.name)
+
+        TRUE
       end
 
       private
@@ -56,16 +86,14 @@ module SimpleBackup
       end
 
       def archive_data
-        filename = "#{type}-#{name}".gsub(/[^a-zA-Z0-9\-\_\. ]*/, '').gsub(/\s+/, '_').downcase + ".#{SimpleBackup::TIMESTAMP}.tar.gz"
-        backup_file = ::File.join(::Dir.tmpdir, filename)
+        filename = "#{type}-#{name}.#{SimpleBackup::TIMESTAMP}.tar.gz"
+        @backup_file = ::File.join(::Dir.tmpdir, filename)
 
         ::File.open(backup_file, 'w') do |f|
           f.write targz.string
         end
 
-        @@logger.info "Backup saved to temporary file #{backup_file}"
-
-        backup_file
+        @@logger.debug "Backup saved to temporary file #{backup_file}"
       end
 
       def targz

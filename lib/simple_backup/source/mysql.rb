@@ -7,7 +7,6 @@ module SimpleBackup
         @db = db
 
         @exclude_tables = options[:exclude_tables] if options[:exclude_tables]
-        @keep_last = options[:keep_last] if options[:keep_last]
       end
 
       private
