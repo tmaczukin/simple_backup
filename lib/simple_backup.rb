@@ -15,7 +15,7 @@ module SimpleBackup
     @@status
   end
 
-  def self.run(&block)
+  def self.define(&block)
     @@logger.scope_start :info, "Backup #{TIMESTAMP} started"
 
     engine = Engine::Engine.new

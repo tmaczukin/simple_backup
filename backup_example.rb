@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'simple_backup'
 
-SimpleBackup.run do
+SimpleBackup.define do
   log_level  :debug
 
   high_usage_treshold 0.9
