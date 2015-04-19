@@ -100,7 +100,7 @@ Have a nice day,
   SimpleBackup
 
 -- 
-Mail was send automatically
+Mail was sent automatically
 Do not respond!
 MAIL
 
