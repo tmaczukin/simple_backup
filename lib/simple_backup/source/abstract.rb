@@ -7,7 +7,7 @@ module SimpleBackup
     class Abstract
       @@logger = Utils::Logger.instance
 
-      def configure(*args)
+      def configure(options = {})
         raise NotImplementedError
       end
 

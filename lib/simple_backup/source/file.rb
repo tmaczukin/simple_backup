@@ -1,10 +1,11 @@
 module SimpleBackup
   module Source
     class File < Abstract
-      def configure(path, options = {})
-        @path = path
+      def configure(options = {})
+        raise "Must provide :path parameter" unless options[:path]
+        @path = options[:path]
 
-        raise "#{path} is a directory - use Dir source instead of File" unless !::File.exist?(path) or ::File.file?(path)
+        raise "#{@path} is a directory - use Dir source instead of File" unless !::File.exist?(@path) or ::File.file?(@path)
       end
 
       private

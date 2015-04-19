@@ -42,7 +42,6 @@ module SimpleBackup
       return nil if source.nil?
 
       name = args.shift
-      identifier = args.shift
       options = args.shift
       options ||= {}
 
@@ -55,7 +54,7 @@ module SimpleBackup
       source.backends = options[:backends] if options[:backends]
       source.name = name
 
-      source.configure(identifier, options)
+      source.configure(options)
 
       @@logger.info "Created source for: #{source.desc.strip}"
 
