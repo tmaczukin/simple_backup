@@ -75,8 +75,8 @@ module SimpleBackup
 
         scope_prefix = '..' * @scope
         message = "%s %7s: %s%s" % [Time.new.strftime(TIME_FORMAT), level.to_s.upcase, scope_prefix, message]
-        @buffer << message
 
+        @buffer << message if should_write
         puts message.colorize(color: color) if should_write
       end
 

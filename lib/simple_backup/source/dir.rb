@@ -5,10 +5,11 @@ module SimpleBackup
         @strategy = :bare
       end
 
-      def configure(path, options = {})
-        @path = path
+      def configure(options = {})
+        raise "Must provide :path parameter" unless options[:path]
+        @path = options[:path]
 
-        raise "#{path} is a file - use File source instead of Dir" unless !::File.exist?(path) or ::File.directory?(path)
+        raise "#{@path} is a file - use File source instead of Dir" unless !::File.exist?(@path) or ::File.directory?(@path)
         @strategy = options[:strategy] if options[:strategy]
       end
 

@@ -3,8 +3,9 @@ module SimpleBackup
     class Mysql < Abstract
       @@mysql = Utils::MySQL.instance
 
-      def configure(db, options = {})
-        @db = db
+      def configure(options = {})
+        @db = @name unless options[:db]
+        @db = options[:db] if options[:db]
 
         @exclude_tables = options[:exclude_tables] if options[:exclude_tables]
       end
