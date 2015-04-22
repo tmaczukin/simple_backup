@@ -1,4 +1,6 @@
+require 'fileutils'
 require 'rubygems/package'
+require 'securerandom'
 require 'tmpdir'
 require 'zlib'
 
@@ -6,6 +8,7 @@ module SimpleBackup
   module Source
     class Abstract
       @@logger = Utils::Logger.instance
+      @tmp_base_path = nil
 
       def configure(options = {})
         raise NotImplementedError
@@ -27,6 +30,10 @@ module SimpleBackup
         @name
       end
 
+      def tmp_base_path=(value)
+        @tmp_base_path = value
+      end
+
       def type
         self.class.name.split('::').last.gsub(/[^a-zA-Z0-9\-\_\. ]*/, '').gsub(/\s+/, '_').downcase
       end
@@ -40,9 +47,7 @@ module SimpleBackup
 
         @@logger.scope_start :info, "Getting archive for: #{desc}"
 
-        @tmp_dir = ::Dir.mktmpdir('simple_backup-')
-        @@logger.debug "Created tmp directory #{@tmp_dir}"
-
+        prepare_tmp_dir
         data_exists = prepare_data
 
         @@logger.warning "No data for: #{desc}" unless data_exists
@@ -87,13 +92,27 @@ module SimpleBackup
 
       def archive_data
         filename = "#{type}-#{name}.#{SimpleBackup::TIMESTAMP}.tar.gz"
-        @backup_file = ::File.join(::Dir.tmpdir, filename)
+        @backup_file = ::File.join(get_tmp, filename)
 
         ::File.open(backup_file, 'w') do |f|
           f.write targz.string
         end
 
         @@logger.debug "Backup saved to temporary file #{backup_file}"
+      end
+
+      def prepare_tmp_dir
+        @tmp_dir = ::File.join(get_tmp, "simple_backup-#{SimpleBackup::TIMESTAMP}-#{SecureRandom.uuid}")
+        FileUtils.mkdir_p @tmp_dir, mode: 0700
+
+        @@logger.debug "Created tmp directory #{@tmp_dir}"
+      end
+
+      def get_tmp
+        tmp = @tmp_base_path
+        tmp = ::Dir.tmpdir unless tmp
+
+        tmp
       end
 
       def targz
