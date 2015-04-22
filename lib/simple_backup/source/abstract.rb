@@ -2,6 +2,7 @@ require 'fileutils'
 require 'rubygems/package'
 require 'securerandom'
 require 'tmpdir'
+require 'tempfile'
 require 'zlib'
 
 module SimpleBackup
@@ -47,11 +48,15 @@ module SimpleBackup
 
         @@logger.scope_start :info, "Getting archive for: #{desc}"
 
-        prepare_tmp_dir
+        @tmp_dir = ::File.join(get_tmp, "simple_backup-#{SimpleBackup::TIMESTAMP}-#{SecureRandom.uuid}")
+        FileUtils.mkdir_p @tmp_dir, mode: 0700
+
+        @@logger.debug "Created tmp directory #{@tmp_dir}"
+
         data_exists = prepare_data
+        archive_data if data_exists
 
         @@logger.warning "No data for: #{desc}" unless data_exists
-        archive_data if data_exists
 
         FileUtils.rm_rf(@tmp_dir)
         @@logger.debug "Removed tmp directory #{@tmp_dir}"
@@ -94,33 +99,27 @@ module SimpleBackup
         filename = "#{type}-#{name}.#{SimpleBackup::TIMESTAMP}.tar.gz"
         @backup_file = ::File.join(get_tmp, filename)
 
-        ::File.open(backup_file, 'w') do |f|
-          f.write targz.string
-        end
+        targz
 
         @@logger.debug "Backup saved to temporary file #{backup_file}"
-      end
-
-      def prepare_tmp_dir
-        @tmp_dir = ::File.join(get_tmp, "simple_backup-#{SimpleBackup::TIMESTAMP}-#{SecureRandom.uuid}")
-        FileUtils.mkdir_p @tmp_dir, mode: 0700
-
-        @@logger.debug "Created tmp directory #{@tmp_dir}"
       end
 
       def get_tmp
         tmp = @tmp_base_path
         tmp = ::Dir.tmpdir unless tmp
-
         tmp
       end
 
       def targz
         path = @tmp_dir
 
-        content = StringIO.new('');
-        Gem::Package::TarWriter.new(content) do |tar|
+        tempfile = Tempfile.new("#{type}-#{name}", get_tmp)
+        @@logger.debug tempfile.path
+
+        Gem::Package::TarWriter.new(tempfile) do |tar|
+          @@logger.debug "Openet tar archive #{tar}"
           ::Dir[::File.join(path, '**/*')].each do |file|
+            @@logger.debug "Adding file #{file}"
             mode = ::File.stat(file).mode
             relative_file = file.sub(/^#{Regexp::escape path}\/?/, '')
 
@@ -129,20 +128,25 @@ module SimpleBackup
             else
               tar.add_file relative_file, mode do |tf|
                 ::File.open(file, 'rb') do |f|
-                  tf.write f.read
+                  while f_content = f.read(512)
+                    tf.write f_content
+                  end
                 end
               end
             end
           end
         end
-        content.rewind
 
-        gz = StringIO.new('')
-        zip = Zlib::GzipWriter.new(gz)
-        zip.write content.string
-        zip.close
+        gz = ::File.open(@backup_file, 'w')
+        Zlib::GzipWriter.open(gz) do |zip|
+          tempfile.seek(0)
+          while f_content = tempfile.read(512)
+            zip.write f_content
+          end
+        end
 
-        gz
+        tempfile.close
+        tempfile.unlink
       end
     end
   end
