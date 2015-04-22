@@ -15,7 +15,18 @@ SimpleBackup.define do
 
   default_keep_last 9
 
+  mailer do
+    subject_prefix '[BACKUP]'
+
+    from 'backup@localhost'
+    to   'root@localhost'
+    cc   'rb@localhost'
+    bcc  'root@localhost'
+  end
+
   sources do
+#    tmp_dir '/tmp/tmp'
+
     dir 'app-1', path: '/home/app/app-1', type: :capistrano, backends: 'backup'
     dir 'app-2', path: '/home/app/app-2', backends: :none
     dir 'none',  path: '/none'
@@ -28,7 +39,7 @@ SimpleBackup.define do
   end
 
   backends do
-    local 'backup', path: '/srv/backup'
+    local 'backup', path: '/tmp/backup'
   end
 
   mysql do
@@ -36,14 +47,5 @@ SimpleBackup.define do
     port 3306
     user 'root'
     pass 'root'
-  end
-
-  mailer do
-    subject_prefix '[BACKUP]'
-
-    from 'backup@localhost'
-    to   'root@localhost'
-    cc   'rb@localhost'
-    bcc  'root@localhost'
   end
 end

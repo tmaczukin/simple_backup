@@ -6,6 +6,7 @@ module SimpleBackup
     include Singleton
 
     @@logger = Utils::Logger.instance
+    @tmp_dir = nil
 
     def initialize
       @sources = {}
@@ -14,6 +15,14 @@ module SimpleBackup
 
     def default_keep_last=(value)
       @default_keep_last = value
+    end
+
+    def tmp_dir(path)
+      raise "Temporary path '#{path}' does not exists" unless ::File.exist?(path)
+      raise "Temporary path '#{path}' is not a directory" unless ::File.directory?(path)
+      raise "Temporary path '#{path}' is not writable" unless ::File.writable?(path)
+      @tmp_dir = path
+      @@logger.info "Replaced temporary path to '#{@tmp_dir}'"
     end
 
     def each(&block)
@@ -52,6 +61,7 @@ module SimpleBackup
       source.keep_last = @default_keep_last
       source.keep_last = options[:keep_last] if options[:keep_last]
       source.backends = options[:backends] if options[:backends]
+      source.tmp_base_path = @tmp_dir if @tmp_dir
       source.name = name
 
       source.configure(options)
