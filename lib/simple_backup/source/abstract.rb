@@ -5,6 +5,51 @@ require 'tmpdir'
 require 'tempfile'
 require 'zlib'
 
+class Gem::Package::TarWriter
+  LONGLINK_NAME = '././@LongLink'
+
+  def add_long_link(name, mode)
+    check_closed
+
+    raise Gem::Package::NonSeekableIO unless @io.respond_to? :pos=
+
+    init_pos = @io.pos
+    @io.write "\0" * 512 # placeholder for the header
+    @io.write name
+    size = @io.pos - init_pos - 512
+
+    remainder = (512 - (size % 512)) % 512
+    @io.write "\0" * remainder
+
+    final_pos = @io.pos
+    @io.pos = init_pos
+
+    header = Gem::Package::TarHeader.new name: LONGLINK_NAME, mode: mode,
+                                         size: size, prefix: '',
+                                         typeflag: 'L'
+
+    @io.write header
+    @io.pos = final_pos
+
+    self
+  end
+
+  def add_longname_file(*arguments)
+    tries ||= 1
+    if block_given?
+      add_file(*arguments, &Proc.new)
+    else
+      add_file(*arguments)
+    end
+  rescue Gem::Package::TooLongFileName => e
+    add_long_link *arguments
+    arguments.first.slice!(0, 100)
+
+    retry if (tries -= 1) >= 0
+    raise e
+  end
+end
+
 module SimpleBackup
   module Source
     class Abstract
@@ -117,7 +162,7 @@ module SimpleBackup
         @@logger.debug tempfile.path
 
         Gem::Package::TarWriter.new(tempfile) do |tar|
-          @@logger.debug "Openet tar archive #{tar}"
+          @@logger.debug "Opened tar archive #{tar}"
           ::Dir[::File.join(path, '**/*')].each do |file|
             @@logger.debug "Adding file #{file}"
             mode = ::File.stat(file).mode
@@ -126,9 +171,9 @@ module SimpleBackup
             if ::File.directory?(file)
               tar.mkdir(relative_file, mode)
             else
-              tar.add_file relative_file, mode do |tf|
+              tar.add_longname_file relative_file, mode do |tf|
                 ::File.open(file, 'rb') do |f|
-                  while f_content = f.read(512)
+                  while f_content = f.read(1048576)
                     tf.write f_content
                   end
                 end
@@ -140,7 +185,7 @@ module SimpleBackup
         gz = ::File.open(@backup_file, 'w')
         Zlib::GzipWriter.open(gz) do |zip|
           tempfile.seek(0)
-          while f_content = tempfile.read(512)
+          while f_content = tempfile.read(1048576)
             zip.write f_content
           end
         end

@@ -2,7 +2,7 @@ module SimpleBackup
   class Version
     MAJOR = 0
     MINOR = 4
-    PATCH = 2
+    PATCH = 3
     PRE_RELEASE = nil
 
     def self.get
