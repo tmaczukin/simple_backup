@@ -7,6 +7,7 @@ require 'simple_backup'
 
 SimpleBackup.define do
   log_level  :debug
+  version    '~> 0.5.0'
 
   high_usage_treshold 0.9
   check_disk_path     '/'

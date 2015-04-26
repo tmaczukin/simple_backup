@@ -6,6 +6,17 @@ module SimpleBackup
       @engine = engine
     end
 
+    def version(requirement, allow_pre = false)
+      current_version = SimpleBackup::Version.get
+
+      @@logger.debug "Version check: is '#{current_version}' matching '#{requirement}'?"
+
+      raise "Incompatible SimpleBackup version. Definition requires '#{requirement}' but used version is '#{current_version}'" unless
+               Gem::Dependency.new('simple_backup', requirement).match?('simple_backup', current_version, allow_pre)
+
+      @@logger.info "Version check: OK"
+    end
+
     def log_level(level)
       @@logger.level = level
     end
