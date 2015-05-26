@@ -6,8 +6,6 @@ module SimpleBackup
     class MySQL
       include Singleton
 
-      @@logger = Logger.instance
-
       def initialize
         @host = 'localhost'
         @port = 3306
@@ -41,7 +39,7 @@ module SimpleBackup
 
       def dump(db, tables, dumpfile)
         cmd = "mysqldump --flush-logs --flush-privileges --order-by-primary --complete-insert -C -h #{@host} -u #{@user} -p#{@pass} #{db} #{tables.join(' ')} > #{dumpfile}"
-        @@logger.debug "Running command: #{cmd}"
+        logger.debug "Running command: #{cmd}"
         `#{cmd}`
       end
 
@@ -59,6 +57,12 @@ module SimpleBackup
 
       def pass(value)
         @pass = value
+      end
+
+      private
+
+      def logger
+        Logger.instance
       end
     end
   end

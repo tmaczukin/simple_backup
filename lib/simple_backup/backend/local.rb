@@ -25,15 +25,16 @@ module SimpleBackup
         to_persist = files.slice(source.keep_last * -1, source.keep_last) if files.length > source.keep_last
         to_remove = files - to_persist
 
-        @@logger.scope_start
+        logger.scope_start
         to_remove.each do |file|
           FileUtils.rm(file)
-          @@logger.debug "Old backup '#{file}' for source '#{source.desc.strip}' cleaned up from '#{desc.strip}'"
+          logger.debug "Old backup '#{file}' for source '#{source.desc.strip}' cleaned up from '#{desc.strip}'"
         end
-        @@logger.scope_end
+        logger.scope_end
       end
 
       private
+
       def get_storage_path(source)
         path = ::File.join(@path, source.type, source.name)
         FileUtils.mkpath path unless ::File.exist?(path)

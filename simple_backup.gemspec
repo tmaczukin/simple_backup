@@ -4,7 +4,7 @@ require 'simple_backup/version'
 
 Gem::Specification.new do |spec|
   spec.name     = 'simple_backup'
-  spec.version  = SimpleBackup::Version::get
+  spec.version  = SimpleBackup::Version.get
   spec.authors  = ['Tomasz Maczukin']
   spec.email    = ['tomasz@maczukin.pl']
   spec.summary  = 'Backup tool with simple DSL for configuration'
@@ -18,7 +18,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec',     '~> 3.2.0'
   spec.add_development_dependency 'simplecov', '~> 0.10.0'
   spec.add_development_dependency 'rubocop',   '~> 0.31.0'
-  spec.add_dependency             'colorize',  '~> 0.7.5'
-  spec.add_dependency             'mail',      '~> 2.6.3'
-  spec.add_dependency             'mysql2',    '~> 0.3.18'
+
+  spec.add_dependency 'colorize',  '~> 0.7.5'
+  spec.add_dependency 'mail',      '~> 2.6.3'
+  spec.add_dependency 'mysql2',    '~> 0.3.18'
 end

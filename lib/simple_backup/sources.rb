@@ -5,7 +5,8 @@ module SimpleBackup
   class Sources
     include Singleton
 
-    @@logger = Utils::Logger.instance
+    attr_writer :logger
+
     @tmp_dir = nil
 
     def initialize
@@ -22,7 +23,7 @@ module SimpleBackup
       raise "Temporary path '#{path}' is not a directory" unless ::File.directory?(path)
       raise "Temporary path '#{path}' is not writable" unless ::File.writable?(path)
       @tmp_dir = path
-      @@logger.info "Replaced temporary path to '#{@tmp_dir}'"
+      logger.info "Replaced temporary path to '#{@tmp_dir}'"
     end
 
     def each(&block)
@@ -66,18 +67,24 @@ module SimpleBackup
 
       source.configure(options)
 
-      @@logger.info "Created source for: #{source.desc.strip}"
+      logger.info "Created source for: #{source.desc.strip}"
 
       @sources[type][name.to_sym] = source
     end
 
     private
+
     def create_source(name)
       file = "simple_backup/source/#{name}"
 
       require file
       source_name = Object.const_get("SimpleBackup::Source::#{name.capitalize}")
       source_name.new
+    end
+
+    def logger
+      Utils::Logger.instance unless @logger
+      @logger if @logger
     end
   end
 end

@@ -4,7 +4,7 @@ require 'socket'
 module SimpleBackup
   module Utils
     class Mailer
-      @@logger = Logger.instance
+      attr_writer :logger
 
       def initialize()
         @to = []
@@ -34,27 +34,27 @@ module SimpleBackup
       end
 
       def send
-        @@logger.info "Setting sender to: #{@from}"
+        logger.info "Setting sender to: #{@from}"
         from = @from
-        @@logger.scope_start :info, "Adding recipients:"
+        logger.scope_start :info, "Adding recipients:"
         to = @to
         to.each do |mail|
-          @@logger.info "to: #{mail}"
+          logger.info "to: #{mail}"
         end
         cc = @cc
         cc.each do |mail|
-          @@logger.info "cc: #{mail}"
+          logger.info "cc: #{mail}"
         end
         bcc = @bcc
         bcc.each do |mail|
-          @@logger.info "bcc: #{mail}"
+          logger.info "bcc: #{mail}"
         end
-        @@logger.scope_end
+        logger.scope_end
 
         @subject_prefix += '[FAILED]' if SimpleBackup.status == :failed
 
         subject = "%s Backup %s for %s" % [@subject_prefix, TIMESTAMP, @hostname]
-        @@logger.debug "Subject: #{subject}"
+        logger.debug "Subject: #{subject}"
 
         body = get_body
 
@@ -68,13 +68,14 @@ module SimpleBackup
         end
 
         mail.delivery_method :sendmail
-        @@logger.debug "Setting delivery method to sendmail"
+        logger.debug "Setting delivery method to sendmail"
 
         mail.deliver
-        @@logger.info "Notification sent"
+        logger.info "Notification sent"
       end
 
       private
+
       def get_body
         sources = ''
 
@@ -93,7 +94,7 @@ Disk usage after backup:
 #{disk_usage}
 Backup log:
 ------------
-#{@@logger.buffer.join("\n")}
+#{logger.buffer.join("\n")}
 ------------
 
 Have a nice day,
@@ -120,6 +121,11 @@ MAIL
         content += "\nHigh usage treshold exceeded!\nMax usage is #{usage[:high_usage]} where treshold is set to #{Utils::Disk::high_usage_treshold}\n" if usage[:high_usage_exceeded]
 
         content
+      end
+
+      def logger
+        Logger.instance unless @logger
+        @logger if @logger
       end
     end
   end

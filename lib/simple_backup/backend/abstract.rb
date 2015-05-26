@@ -1,7 +1,7 @@
 module SimpleBackup
   module Backend
     class Abstract
-      @@logger = Utils::Logger.instance
+      attr_writer :logger
 
       def configure(*args)
         raise NotImplementedError
@@ -29,6 +29,13 @@ module SimpleBackup
 
       def cleanup(source)
         raise NotImplementedError
+      end
+
+      private
+
+      def logger
+        Utils::Logger.instance unless @logger
+        @logger if @logger
       end
     end
   end

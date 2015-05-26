@@ -1,4 +1,6 @@
 module SimpleBackup
+  # Version class
+  #
   class Version
     MAJOR = 0
     MINOR = 5
@@ -7,7 +9,7 @@ module SimpleBackup
 
     def self.get
       version = "#{MAJOR}.#{MINOR}.#{PATCH}"
-      version += "-#{self.format(PRE_RELEASE)}" unless PRE_RELEASE.nil?
+      version += "-#{format(PRE_RELEASE)}" unless PRE_RELEASE.nil?
 
       version
     end

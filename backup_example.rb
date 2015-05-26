@@ -6,12 +6,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'simple_backup'
 
 SimpleBackup.define do
-  log_level  :debug
+  log_level :debug
 
   high_usage_treshold 0.9
-  check_disk_path     '/'
-  check_disk_path     '/backup'
-  check_disk_path     '/home/app'
+
+  check_disk_path '/'
+  check_disk_path '/backup'
+  check_disk_path '/home/app'
 
   default_keep_last 9
 
@@ -19,13 +20,13 @@ SimpleBackup.define do
     subject_prefix '[BACKUP]'
 
     from 'backup@localhost'
-    to   'root@localhost'
-    cc   'rb@localhost'
-    bcc  'root@localhost'
+    to 'root@localhost'
+    cc 'rb@localhost'
+    bcc 'root@localhost'
   end
 
   sources do
-#    tmp_dir '/tmp/tmp'
+    # tmp_dir '/tmp/tmp'
 
     dir 'app-1', path: '/home/app/app-1', type: :capistrano, backends: 'backup'
     dir 'app-2', path: '/home/app/app-2', backends: :none

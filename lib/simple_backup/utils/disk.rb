@@ -1,5 +1,7 @@
 module SimpleBackup
   module Utils
+    # Disk util
+    #
     class Disk
       @@high_usage_treshold = 0.9
       @@paths = []
@@ -7,7 +9,7 @@ module SimpleBackup
       def self.high_usage_treshold=(value)
         @@high_usage_treshold = value.to_f
 
-        raise ArgumentError.new "Backuper::Utils::Disk::high_usage_treshold must be a float greater than zero" if @@high_usage_treshold <= 0.0
+        raise ArgumentError, 'Backuper::Utils::Disk::high_usage_treshold must be a float greater than zero' if @@high_usage_treshold <= 0.0
       end
 
       def self.high_usage_treshold
@@ -22,7 +24,7 @@ module SimpleBackup
         df = `df -m #{@@paths.join(' ')} 2>/dev/null`.split("\n")
         df.shift
 
-        max_percent = 0.0;
+        max_percent = 0.0
         df.map! do |row|
           row = row.split(' ')
 

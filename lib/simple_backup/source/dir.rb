@@ -32,7 +32,7 @@ module SimpleBackup
 
         strategy.get_entries(@path)
       rescue Errno::ENOENT
-        @@logger.warning "Path '#{@path}' does not exists"
+        logger.warning "Path '#{@path}' does not exists"
         nil
       end
     end

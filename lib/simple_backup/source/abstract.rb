@@ -53,7 +53,8 @@ end
 module SimpleBackup
   module Source
     class Abstract
-      @@logger = Utils::Logger.instance
+      attr_writer :logger
+
       @tmp_base_path = nil
 
       def configure(options = {})
@@ -91,31 +92,31 @@ module SimpleBackup
       def get
         return @backup_file if @backup_file
 
-        @@logger.scope_start :info, "Getting archive for: #{desc}"
+        logger.scope_start :info, "Getting archive for: #{desc}"
 
         @tmp_dir = ::File.join(get_tmp, "simple_backup-#{SimpleBackup::TIMESTAMP}-#{SecureRandom.uuid}")
         FileUtils.mkdir_p @tmp_dir, mode: 0700
 
-        @@logger.debug "Created tmp directory #{@tmp_dir}"
+        logger.debug "Created tmp directory #{@tmp_dir}"
 
         data_exists = prepare_data
         archive_data if data_exists
 
-        @@logger.warning "No data for: #{desc}" unless data_exists
+        logger.warning "No data for: #{desc}" unless data_exists
 
         FileUtils.rm_rf(@tmp_dir)
-        @@logger.debug "Removed tmp directory #{@tmp_dir}"
+        logger.debug "Removed tmp directory #{@tmp_dir}"
 
         @backup_file
       ensure
-        @@logger.scope_end
+        logger.scope_end
       end
 
       def cleanup
         return nil unless @backup_file
 
         FileUtils.rm (@backup_file)
-        @@logger.debug "Temporary backup file #{@backup_file} was removed"
+        logger.debug "Temporary backup file #{@backup_file} was removed"
       end
 
       def backup_file
@@ -136,6 +137,7 @@ module SimpleBackup
       end
 
       private
+
       def prepare_data
         raise NotImplementedError
       end
@@ -146,7 +148,7 @@ module SimpleBackup
 
         targz
 
-        @@logger.debug "Backup saved to temporary file #{backup_file}"
+        logger.debug "Backup saved to temporary file #{backup_file}"
       end
 
       def get_tmp
@@ -159,12 +161,12 @@ module SimpleBackup
         path = @tmp_dir
 
         tempfile = Tempfile.new("#{type}-#{name}", get_tmp)
-        @@logger.debug tempfile.path
+        logger.debug tempfile.path
 
         Gem::Package::TarWriter.new(tempfile) do |tar|
-          @@logger.debug "Opened tar archive #{tar}"
+          logger.debug "Opened tar archive #{tar}"
           ::Dir[::File.join(path, '**/*')].each do |file|
-            @@logger.debug "Adding file #{file}"
+            logger.debug "Adding file #{file}"
             mode = ::File.stat(file).mode
             relative_file = file.sub(/^#{Regexp::escape path}\/?/, '')
 
@@ -192,6 +194,11 @@ module SimpleBackup
 
         tempfile.close
         tempfile.unlink
+      end
+
+      def logger
+        Utils::Logger.instance unless @logger
+        @logger if @logger
       end
     end
   end
