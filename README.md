@@ -36,7 +36,7 @@ a new pull request. I am using ["git-flow"](http://nvie.com/posts/a-successful-g
 this repository:
 
 1. There are two long-living branches: development and master. Master is always a "production" version. Development
-   should always be in the "productino ready" state.
+   should always be in the "production ready" state.
 2. There will be no release branches.
 3. All production versions are tagged and merged from master into development.
 
