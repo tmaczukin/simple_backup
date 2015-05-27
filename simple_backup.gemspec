@@ -4,7 +4,7 @@ require 'simple_backup/version'
 
 Gem::Specification.new do |spec|
   spec.name     = 'simple_backup'
-  spec.version  = SimpleBackup::Version.get
+  spec.version  = SimpleBackup::Version.instance.get
   spec.authors  = ['Tomasz Maczukin']
   spec.email    = ['tomasz@maczukin.pl']
   spec.summary  = 'Backup tool with simple DSL for configuration'

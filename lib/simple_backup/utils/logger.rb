@@ -38,7 +38,7 @@ module SimpleBackup
       def show_banner
         lines = []
         lines << "LOG STARTED #{Time.new.strftime('%Y-%m-%dT%H:%M:%S')}"
-        lines << "SimpleBackup v#{SimpleBackup::Version.get}"
+        lines << "SimpleBackup v#{SimpleBackup::Version.instance.get}"
         banner(lines)
       end
 
